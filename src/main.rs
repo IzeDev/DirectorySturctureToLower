@@ -10,8 +10,7 @@ fn get_subfolders(path: &str, level: i32) -> Result<Vec<(String, i32)>, Error> {
             .map(|e| (e.path().display().to_string(), level))
             .collect())
     } else {
-        Err(Error::new(
-            
+        Err(Error::new(            
             ErrorKind::NotFound,
             format!("Could not find: {}", path),
         ))
