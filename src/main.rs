@@ -3,7 +3,7 @@ use std::{
     io::{Error, ErrorKind},
 };
 
-fn get_subfolders(path: &str, level: i32) -> Result<Vec<(String, i32)>, Error> {
+fn get_directory_entries(path: &str, level: i32) -> Result<Vec<(String, i32)>, Error> {
     if let Ok(entries) = fs::read_dir(path) {
         Ok(entries
             .filter_map(|e| e.ok())
@@ -25,7 +25,7 @@ fn get_directory_tree(mut directory_tree: Vec<(String, i32)>) ->Vec<(String, i32
         let mut sub_directories: Vec<(String, i32)> = directory_tree
             .iter()
             .filter(|d| d.1 == current_max)
-            .filter_map(|d: &(String, i32)| get_subfolders(&d.0, current_max + 1).ok())
+            .filter_map(|d: &(String, i32)| get_directory_entries(&d.0, current_max + 1).ok())
             .flatten()
             .map(|d: (String, i32)| (d.0, d.1))
             .collect();
@@ -40,9 +40,32 @@ fn get_directory_tree(mut directory_tree: Vec<(String, i32)>) ->Vec<(String, i32
     directory_tree
 }
 
+fn rename_entries_in_directory_tree(mut directory_tree: Vec<(String, i32)>) ->Result<bool, Error> {
+    directory_tree.sort_by_key(|e| e.1);
+    let directory_tree_with_new_names: Vec<(&String, String)> = directory_tree
+        .iter()
+        .map(|e| (&e.0, e.0.to_lowercase()))
+        .collect();
+
+    for elem in directory_tree_with_new_names {
+        // Renames the whole path, gotta fix that.
+        //let result = fs::rename(elem.0, elem.1);
+        
+        if result.is_err() {
+            return Err(result.unwrap_err())
+        }
+    }
+
+
+
+
+    Ok(true)
+}
+
 fn main() {
-    if let Ok(sufolders) = get_subfolders("/home/jimmy/Desktop/Test", 0) {
-        let subfolders = get_directory_tree(sufolders);
+    if let Ok(entries) = get_directory_entries("/home/jimmy/Desktop/Test", 0) {
+        let entries = get_directory_tree(entries);
+        let x = rename_entries_in_directory_tree(entries);
         println!("Success!");
     } else {
         println!("Failure!");
