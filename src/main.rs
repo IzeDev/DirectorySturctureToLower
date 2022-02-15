@@ -55,23 +55,16 @@ fn main() {
             .map(|(item, parent, original_item)| (parent + &item.to_lowercase(), original_item))
             .collect();
 
-        // dummies.sort_by(|d1, d2| d1.x.cmp(&d2.x));
-        for entry in &entries {
-            println!("Original: {}, new: {}", entry.1, entry.0)
-        }
-
-        println!("----");
-        
-        let y = 5;
-
         entries.sort_by(|i1, i2| i2.1.cmp(&i1.1));
-        
 
-        for entry in &entries {
-            println!("Original: {}, new: {}", entry.1, entry.0)
+        for (new_name, old_name) in entries {
+            let rename_result = fs::rename(old_name, new_name);
+
+            if let Err(err) = rename_result {
+                println!("{:?}", err);
+            }
         }
-            
-        let y = 5;
+        
 
     }
     else if let Err(err) = result {
